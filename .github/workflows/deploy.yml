@@ -44,5 +44,5 @@ jobs:
             docker stop webapp || true
             docker rm webapp || true
             docker run -d -p 80:8080 \
-              -e ConnectionStrings__DefaultConnection="${{ secrets.DB_CONNECTION_STRING }}" \
+              -e ConnectionStrings__MiWebAppContext="${{ secrets.DB_CONNECTION_STRING }}" \
               --name webapp ${{ secrets.DOCKER_USERNAME }}/miwebapp-imagen:latest
