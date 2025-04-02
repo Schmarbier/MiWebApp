@@ -9,6 +9,9 @@ RUN dotnet build "MiWebApp.csproj" -c Release -o /app/build
 # Instalar las herramientas de EF Core
 RUN dotnet tool install --global dotnet-ef
 
+# Agregar la ruta de las herramientas al PATH
+ENV PATH="$PATH:/root/.dotnet/tools"
+
 # Ejecutar las migraciones durante el build
 RUN dotnet ef database update --connection "$CONN_STR"
 
