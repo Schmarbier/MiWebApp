@@ -37,9 +37,10 @@ jobs:
         with:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT }} # Si no es 22
+          password: ${{ secrets.SERVER_PASSWORD }}
+          port: ${{ secrets.SERVER_PORT }}
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker stop webapp
-            docker run -d -p 80:80 --name webapp schmarbier/miwebapp-imagen:latest
+            docker stop webapp || true
+            docker rm webapp || true
+            docker run -d -p 80:80 --name webapp ${{ secrets.DOCKER_USERNAME }}/miwebapp-imagen:latest
