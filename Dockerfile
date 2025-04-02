@@ -6,13 +6,12 @@ COPY . .
 WORKDIR "/src/."
 RUN dotnet build "MiWebApp.csproj" -c Release -o /app/build
 
+# Ejecutar las migraciones durante el build
+RUN dotnet ef database update --connection "$CONN_STR"
+
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 COPY --from=build /app/build .
 
-# Copiar el script de entrada
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
-# Ejecutar el script en lugar de iniciar directamente la app
-ENTRYPOINT ["/app/entrypoint.sh"]
+# El entrypoint ya no es necesario
+ENTRYPOINT ["dotnet", "MiWebApp.dll"]
