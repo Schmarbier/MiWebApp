@@ -20,9 +20,6 @@ jobs:
       - name: Build and publish
         run: dotnet publish -c Release -o ./publish
 
-      - name: Print connection string
-        run: echo "Connection string: ${{ secrets.DB_CONNECTION_STRING }}"
-
       - name: Build Docker image
         run: docker build --progress=plain -t miwebapp-imagen --build-arg CONN_STR="Server=sqlserver;Database=MiWebApp;User Id=sa;Password=Password#;" ./
 
