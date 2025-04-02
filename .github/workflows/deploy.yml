@@ -43,4 +43,4 @@ jobs:
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             docker stop webapp || true
             docker rm webapp || true
-            docker run -d -p 80:80 --name webapp ${{ secrets.DOCKER_USERNAME }}/miwebapp-imagen:latest
+            docker run -d -p 80:8080 --name webapp ${{ secrets.DOCKER_USERNAME }}/miwebapp-imagen:latest
