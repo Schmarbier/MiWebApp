@@ -13,6 +13,7 @@ RUN dotnet tool install --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
 
 # Ejecutar las migraciones durante el build
+RUN echo "Cadena de conexión: $CONN_STR"
 RUN dotnet ef database update --connection "$CONN_STR"
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
