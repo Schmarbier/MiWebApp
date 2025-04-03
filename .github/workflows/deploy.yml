@@ -19,6 +19,11 @@ jobs:
       - name: Build and publish
         run: dotnet publish -c Release -o ./publish
 
+      - name: Setup EF Tools 
+        run: | 
+          dotnet tool install --global dotnet-ef 
+          dotnet tool restore 
+
       - name: Generate migration script
         run: dotnet ef migrations bundle --configuration Release --output ./migrations/migrate.sql
         
