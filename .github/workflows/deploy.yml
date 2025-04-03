@@ -3,35 +3,27 @@ name: Deploy to Docker Host
 on:
   push:
     branches:
-      - main  # O la rama que uses para despliegues
+      - main
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3  # Descarga el código
+      - uses: actions/checkout@v3
 
       - name: Set up .NET
         uses: actions/setup-dotnet@v3
         with:
-          dotnet-version: '9.0.x'  # Tu versión de .NET
+          dotnet-version: '9.0.x'
 
-      - name: Build and publish
-        run: dotnet publish -c Release -o ./publish
-
-      - name: Build Docker image
-        run: docker build --progress=plain -t miwebapp-imagen --build-arg CONN_STR="Server=sqlserver;Database=MiWebApp;User Id=sa;Password=Password#;" ./
-
-      - name: Login to Docker Hub 
+      - name: Login to Docker Hub
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Tag and push Docker image (opcional, si usas un registro)
+      - name: Build and push to Docker Hub
         run: |
-          docker tag miwebapp-imagen ${{ secrets.DOCKER_USERNAME }}/miwebapp-imagen:latest
+          docker build --progress=plain -t ${{ secrets.DOCKER_USERNAME }}/miwebapp-imagen:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/miwebapp-imagen:latest
-
-
+          
       - name: SSH into server and deploy
         uses: appleboy/ssh-action@master
         with:
@@ -41,10 +33,6 @@ jobs:
           port: ${{ secrets.SERVER_PORT }}
           script: |
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-            docker stop webapp || true
-            docker rm webapp || true
-            docker network create webapp || true
-            docker run -d -p 80:8080 \
-              -e ConnectionStrings__MiWebAppContext="${{ secrets.DB_CONNECTION_STRING }}" \
-              --network webapp \
-              --name webapp ${{ secrets.DOCKER_USERNAME }}/miwebapp-imagen:latest
+            docker-compose -f docker-compose.yml pull web #  Descarga la imagen de tu app
+            DB_CONNECTION_STRING="${{ secrets.DB_CONNECTION_STRING }}" SA_PASSWORD="${{ secrets.SA_PASSWORD }}" docker-compose -f docker-compose.yml run migrations
+            docker-compose -f docker-compose.yml up -d  # Inicia o actualiza los contenedores
