@@ -11,7 +11,8 @@ RUN dotnet tool install --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
 
 # Ejecuta las migraciones
-RUN dotnet ef database update --connection "$CONNECTION_STRING"
+RUN echo "Connection string: $CONNECTION_STRING"
+RUN dotnet ef database update --connection "Server=149.50.149.217,1433;Database=MiWebApp;User Id=sa;Password=Password"
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
