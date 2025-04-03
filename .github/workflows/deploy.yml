@@ -16,21 +16,16 @@ jobs:
         with:
           dotnet-version: '9.0.x'
 
-      - name: Build and publish
-        run: dotnet publish -c Release -o ./publish
-
       - name: Setup EF Tools 
         run: | 
           dotnet tool install --global dotnet-ef 
           dotnet tool restore 
 
-      - name: Generate migration script
-        run: dotnet ef migrations bundle --configuration Release --output ./migrations/migrate.sql
-        
-      - name: Copy Migrations Bundle
-        run: |
-          mkdir -p ./migrations
-          cp ./migrations/migrate.sql ./publish
+      - name: Generate Migration Bundle
+        run: dotnet ef migrations bundle --self-contained --runtime linux-x64 -o migrations-bundle
+
+      - name: Build and publish
+        run: dotnet publish -c Release -o ./publish
         
       - name: Build Docker image
         run: docker build --progress=plain -t miwebapp-imagen --build-arg CONNECTION_STRING="Server=149.50.149.217,1433;Database=MiWebApp;User Id=sa;Password=Password#;TrustServerCertificate=True;" ./
