@@ -12,7 +12,7 @@ ENV PATH="$PATH:/root/.dotnet/tools"
 
 # Ejecuta las migraciones
 RUN echo "Connection string: $CONNECTION_STRING"
-RUN dotnet ef database update --connection "Server=149.50.149.217,1433;Database=MiWebApp;User Id=sa;Password=Password"
+RUN dotnet ef database update --connection "Server=149.50.149.217,1433;Database=MiWebApp;User Id=sa;Password=Password\#;TrustServerCertificate=True;Trusted_Connection=True"
 
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
