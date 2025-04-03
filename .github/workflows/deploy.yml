@@ -20,7 +20,7 @@ jobs:
         run: dotnet publish -c Release -o ./publish
         
       - name: Build Docker image
-        run: docker build --progress=plain -t miwebapp-imagen --build-arg CONN_STR="Server=sqlserver;Database=MiWebApp;User Id=sa;Password=Password#;" ./
+        run: docker build --progress=plain -t miwebapp-imagen --build-arg CONNECTION_STRING="Server=sqlserver;Database=MiWebApp;User Id=sa;Password=Password#;" ./
 
       - name: Login to Docker Hub 
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
