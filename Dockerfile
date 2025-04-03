@@ -1,12 +1,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY ["MiWebApp.csproj", "./"]
-RUN dotnet restore
+RUN dotnet restore "./MiWebApp.csproj"
 COPY . .
-WORKDIR "/src/MiWebApp"
-RUN dotnet build -c Release -o /app/build
+WORKDIR "/src/."
+RUN dotnet build "MiWebApp.csproj" -c Release -o /app/build
 
-# Instala las herramientas de EF Core
+# Instalar las herramientas de EF Core
 RUN dotnet tool install --global dotnet-ef
 ENV PATH="$PATH:/root/.dotnet/tools"
 
