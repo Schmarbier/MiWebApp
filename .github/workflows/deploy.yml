@@ -18,9 +18,17 @@ jobs:
 
       - name: Build and publish
         run: dotnet publish -c Release -o ./publish
+
+      - name: Generate migration script
+        run: dotnet ef migrations bundle --configuration Release --output ./migrations/migrate.sql
+        
+      - name: Copy Migrations Bundle
+        run: |
+          mkdir -p ./migrations
+          cp ./migrations/migrate.sql ./publish
         
       - name: Build Docker image
-        run: docker build --progress=plain -t miwebapp-imagen --build-arg CONNECTION_STRING="Server=149.50.149.217,1433;Database=MiWebApp;User Id=sa;Password=Password#;TrustServerCertificate=True;Trusted_Connection=True" ./
+        run: docker build --progress=plain -t miwebapp-imagen --build-arg CONNECTION_STRING="Server=149.50.149.217,1433;Database=MiWebApp;User Id=sa;Password=Password#;TrustServerCertificate=True;" ./
 
       - name: Login to Docker Hub 
         run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
@@ -45,4 +53,4 @@ jobs:
             docker run -d -p 80:8080 \
               -e ConnectionStrings__MiWebAppContext="${{ secrets.DB_CONNECTION_STRING }}" \
               --network webapp \
-              --name webapp ${{ secrets.DOCKER_USERNAME }}/miwebapp-imagen:latest
+              --name webapp ${{ secrets.DOCKER_USERNAME }}/miwebapp-imagen:latest /app/migrate.sql
